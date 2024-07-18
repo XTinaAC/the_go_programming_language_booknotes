@@ -26,7 +26,7 @@ func main() {
 	swap(&x, &y)
 	fmt.Println(x, y)	// -1 1
 
-	// 2) computing the GCD (greatest common divisor) of 2 integers
+	// 2) computing the GCD (greatest common divisor) and LCM (lowest common multiple) of 2 integers
 	fmt.Println(gcd_lcm(6, 21))	// 3 42
 
 	// 3) assign unwanted values to the blank identifier

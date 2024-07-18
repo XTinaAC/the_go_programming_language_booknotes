@@ -33,7 +33,7 @@ const (
 )
 
 func main() {
-	// 控制台标准输入出现乱码-待解决...
+	// 控制台标准输出出现乱码-待解决...
 	// lissajous(os.Stdout) 
 
 	// 改为文件输出：https://blog.csdn.net/ocean_this_is_it/article/details/129850517

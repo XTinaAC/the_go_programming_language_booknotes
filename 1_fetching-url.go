@@ -57,9 +57,9 @@ func sequential_fetch() {
 		}
 
 		// time cost of each task
-		fmt.Printf("【%d】Status: %s Time: %.2fs elapsed (%s)\n Content: %s ...\n", idx, resp.Status, time.Since(sub_start).Seconds(), url, data[:20])
+		fmt.Printf("【%d】Status: %s Time: %.2fs elapsed (%s)\n Content: %s ...\n", idx, resp.Status, time.Since(sub_start).Seconds(), url, data)
 	}
-	
+
 	// total time cost
 	fmt.Printf("in total: %.2fs elapsed\n", time.Since(start).Seconds())
 }
