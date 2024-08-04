@@ -26,6 +26,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
 func main() {
@@ -84,4 +85,8 @@ func main() {
 	fmt.Printf("%d %#[1]b %#[1]o %#[1]x \n", m) // 72 0b1001000 0110 0x48
 	// The [1] adverb after % instructs Printf to use the 1st operand over and over again.
 	// The # adverb for %o / %x / %X tells Printf to emit a 0 / 0x / 0X prefix respectively.
+
+	// Print the range of values in hexadecimal:
+	fmt.Printf("%x %x %x %x %x \n", math.MaxInt8, math.MaxInt16, math.MaxInt32, math.MaxInt64, math.MaxInt)
+	fmt.Printf("%x %x %x %x %x \n", math.MinInt8, math.MinInt16, math.MinInt32, math.MinInt64, math.MinInt)
 }
