@@ -38,19 +38,34 @@ func main() {
 
 		UTF-8 is a [ variable-length encoding ] of Unicode code points as bytes, 
 		and is now a Unicode standard. It uses between 1 & 4 bytes to represent each rune.
+
 		The higher-order bits of the 1st byte of the encoding for a rune, 
 		indicate how many bytes follow (which begin with 10):
-			0xxxxxxx							0 ~ 127 (ASCII)
-			110xxxxx 10xxxxxx					128 ~ 2047 (values < 128 are unused)
-			1110xxxx 10xxxxxx 10xxxxxx			2048 ~ 65535 (values < 2048 are unused)
+			0xxxxxxx					0 ~ 127 (ASCII)
+			110xxxxx 10xxxxxx			128 ~ 2047 (values < 128 are unused)
+			1110xxxx 10xxxxxx 10xxxxxx	2048 ~ 65535 (values < 2048 are unused)
 			11110xxx 10xxxxxx 10xxxxxx 10xxxxxx	65536 ~ 0x10ffff (other values unused)
+
 		A rune whose value is less than 256 can be written with a single hexadecimal escape, such as:
 			\x41	<=> 	A
-		But for higher values, a \u (16-bit) or \U (32-bit) escape must be used:
+		But for higher values, a【\u (16-bit)】or【\U (32-bit)】escape must be used.
+		（下面示例：Unicode escapes that denotes the UTF-8 encoding of the specified numeric code point value）
 	*/
-	u0 := "A 世 界"
-	u1 := "\x41 \xe4\xb8\x96 \xe7\x95\x8c"
-	u2 := "\x41 \u4e16 \u754c"
-	u3 := "\x41 \U00004e16 \U0000754c"
-	fmt.Println(u0, u1, u2, u3)
+
+	// "A" 对应的numeric code point【16进制】为【\u41】(或【\U00000041】)，对应【2进制】为【0100 0001】；
+	// 		1-byte unicode编码为【0100 0001】，对应【16进制】为【\x41】
+
+	// "世" 对应的numeric code point【16进制】为【\u4e16】(或【\U00004e16】)，对应【2进制】为【0100 1110 0001 0110】；
+	// 		3-byte unicode编码为【1110 0100 1011 1000 1001 0110】，对应【16进制】为【\xe4 \xb8 \x96】
+
+	// "界" 对应的numeric code point【16进制】为【\u754c】(或【\U0000754c】)，对应【2进制】为【0111 0101 0100 1100】；
+	// 		3-byte unicode编码为【1110 0111 1001 0101 1000 1100】，对应【16进制】为【\xe7 \x95 \x8c】
+
+	u0 := "A A 世 界" 
+	u1 := "\x41 \x41 \xe4\xb8\x96 \xe7\x95\x8c"	// 1110 
+	u2 := "\x41 \u0041 \u4e16 \u754c"	// x0100 
+	u3 := "\x41 \U00000041 \U00004e16 \U0000754c"
+	fmt.Println("\n", u0, "\n", u1, "\n", u2, "\n", u3)
+
+
 }
