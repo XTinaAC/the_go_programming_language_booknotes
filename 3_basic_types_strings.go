@@ -8,6 +8,7 @@ package main
 
 import (
 	"fmt"
+	"unicode/utf8"
 )
 
 func main() {
@@ -29,21 +30,21 @@ func main() {
 		A string shares the SAME underlying byte array with its【substrings】.
 		Different【copies】of a string also share the SAME underlying memory.
 
-		Unicode code point <=> rune <=> each assigned to a character in all of the world's writing systems,
+		Unicode code point <=> [ rune ] <=> each assigned to a character in all of the world's writing systems,
 	 	  plus accents and other diacritical makrs, control codes likes tab and carriage return, and plenty of esoterica.
 
 		Unicode version 8 defines over 120,000 code points, and the ones that are in widespread use
 		are fewer than 65,536 (which would fit in 16 bits)
-		Go uses [ int32 ] to hold a single rune.
+		Go uses [ int32 ] to hold a single [ rune ].
 
 		UTF-8 is a [ variable-length encoding ] of Unicode code points as bytes, 
 		and is now a Unicode standard. It uses between 1 & 4 bytes to represent each rune.
 
 		The higher-order bits of the 1st byte of the encoding for a rune, 
 		indicate how many bytes follow (which begin with 10):
-			0xxxxxxx					0 ~ 127 (ASCII)
+			0xxxxxxx				0 ~ 127 (ASCII)
 			110xxxxx 10xxxxxx			128 ~ 2047 (values < 128 are unused)
-			1110xxxx 10xxxxxx 10xxxxxx	2048 ~ 65535 (values < 2048 are unused)
+			1110xxxx 10xxxxxx 10xxxxxx		2048 ~ 65535 (values < 2048 are unused)
 			11110xxx 10xxxxxx 10xxxxxx 10xxxxxx	65536 ~ 0x10ffff (other values unused)
 
 		A rune whose value is less than 256 can be written with a single hexadecimal escape, such as:
@@ -61,11 +62,54 @@ func main() {
 	// "界" 对应的numeric code point【16进制】为【\u754c】(或【\U0000754c】)，对应【2进制】为【0111 0101 0100 1100】；
 	// 		3-byte unicode编码为【1110 0111 1001 0101 1000 1100】，对应【16进制】为【\xe7 \x95 \x8c】
 
-	u0 := "A A 世 界" 
-	u1 := "\x41 \x41 \xe4\xb8\x96 \xe7\x95\x8c"	// 1110 
-	u2 := "\x41 \u0041 \u4e16 \u754c"	// x0100 
-	u3 := "\x41 \U00000041 \U00004e16 \U0000754c"
+	u0 := "A 世 界" 
+	u1 := "\x41 \xe4\xb8\x96 \xe7\x95\x8c"	// 1110 
+	u2 := "\u0041 \u4e16 \u754c"	// x0100 
+	u3 := "\U00000041 \U00004e16 \U0000754c"
 	fmt.Println("\n", u0, "\n", u1, "\n", u2, "\n", u3)
 
+	fmt.Println(len(u0))	// number of bytes: 9
+	fmt.Println(utf8.RuneCountInString(u0))	// number of runes (code points): 5
 
+	// explicit decoding
+	for i := 0; i < len(u0); {
+		r, size := utf8.DecodeRuneInString(u0[i:])
+		fmt.Printf("%d \t %c \n", i, r)
+		i += size
+	}
+
+	// implicit decoding
+	for i, r := range u0 {
+		fmt.Printf("%d \t %q \t %d \n", i, r, r)
+	}
+	// 打印结果如下：
+	// 0 	 'A' 	 65 
+	// 1 	 ' ' 	 32 
+	// 2 	 '世' 	 19990 
+	// 5 	 ' ' 	 32 
+	// 6 	 '界' 	 30028
+
+	// Each time a UTF-8 decoder, whether explicit in a call to utf8.DecodeRuneInString or implicit in a range loop,
+	// consumes an unexpected input byte, it generates a special Unicode replacement character, '\uFFFD', 
+	// which is usually printed as a white question mark inside a black hexagonal or diamond-like shape �.
+	// When a program encounters this rune value, it’s often a sign that some upstream part of the system 
+	// that generated the string data has been careless in its treatment of text encodings.
+	fmt.Println("\ufffd")
+
+	// %d 	decimal integer
+	// %x, %o, %b 	integer in hexadecimal, octal, binary
+	// %f, %g, %e 	floating-point number: 3.141593 3.141592653589793 3.141593e+00
+	// %t 	boolean: true or false
+	// %c 	rune (Unicode code point)
+	// %s 	string
+	// %q 	quoted string "abc" or rune 'c'
+	// %v 	any value in a natural format
+	// %T 	type of any value
+	// %% 	literal percent sign (no operand)
+
+	// //【中文范围】\u4e00 (十进制：19968) - \u9fa5 (十进制：40869) 
+	// for i := 19968; i <= 40869; {
+	// 	fmt.Printf("%c ", i)
+	// 	i += 1
+	// }
 }
